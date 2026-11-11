@@ -86,7 +86,7 @@ const V=[{k:"dep",n:"פיקדון בנקאי",src:"שיעור תשואה משו�
 {k:"gem",n:"קופת גמל להשקעה",src:"שיעור תשואה משוער לצורך המחשה, לפי גמל נט, רשות שוק ההון"},
 {k:"apt",n:"דירה להשקעה",src:"שיעור תשואה משוער לצורך המחשה, לפי נתוני עסקאות נדל\"ן ושכירות"},
 {k:"snp",n:"מדד S&P 500",src:"שיעור תשואה משוער לצורך המחשה, לפי התשואה השנתית הממוצעת של המדד לאורך שנים"},
-{k:"land",n:"קרקע פרטית במרכז הארץ",src:"שיעור תשואה משוער לצורך המחשה, לפי עסקאות קרקע שדווחו באתר רשות המסים"}];
+{k:"land",n:"קרקע פרטית במרכז הארץ",t:"מסלול קופת קרקע מבית Connection",src:"שיעור תשואה משוער לצורך המחשה, לפי עסקאות קרקע שדווחו באתר רשות המסים"}];
 const GOALS=["פוטנציאל לתשואה גבוהה","חיסכון עבור הילדים","בניית הון לטווח ארוך","גיוון תיק ההשקעות"],CAP={min:50000,max:1000000,step:10000,start:250000},YRS=[2,6,10];
 const WANTS=["להגדיל את ההון העצמי","להשקיע עבור הילדים","להתקדם בדרך לדירה"];
 const DISC="הנתונים המוצגים במשחק מיועדים להמחשה בלבד ואינם מהווים ייעוץ השקעות, המלצה או התחייבות לתשואה. הנתונים מבוססים על עסקאות היסטוריות, מקורות פומביים והנחות חישוב. תשואות עבר אינן מעידות על תשואות עתידיות. השקעה בקרקע כרוכה בסיכונים, לרבות סיכונים תכנוניים, שינויים בשווי הקרקע וחוסר נזילות. החישובים אינם כוללים מסים, עלויות מימון והוצאות נוספות, אלא אם צוין אחרת.";
@@ -114,7 +114,7 @@ const horizon=()=>ask(3,"horizon","לכמה זמן?",YRS,y=>y+" שנים",v=>{S.
 const guess=()=>ask(4,"guess",`לדעתכם, איזה אפיק ישיג את התשואה הגבוהה ביותר בעוד ${S.y} שנים?`,V,v=>v.n,v=>{S.guess=v.n;results()});
 function results(){const {cap,y}=S,rows=V.map(v=>{const m=mult(v.k,y);return{...v,m,fin:cap*m}}),land=rows.find(r=>r.k==="land");
  const hit=S.guess===land.n;
- const cards=rows.map(r=>{const L=r.k==="land";return`<article class="card res ${L?"land":""}"><h3>${r.n}</h3><div class="bar"><b style="--w:${r.fin/land.fin*100}%"></b></div><div class="fin" data-to="${r.fin}">${ils(r.fin)}</div><dl><div><dt>רווח</dt><dd>${ils(r.fin-cap)}</dd></div><div><dt>${L?"פוטנציאל תשואה מצטברת":"תשואה מצטברת"}</dt><dd>${pc(r.m-1)}</dd></div>${L?"":`<div><dt>תשואה שנתית</dt><dd>${pc(CFG.rates[r.k])}</dd></div>`}</dl><small>${r.src}</small>${L&&y==6&&CFG.est6?"<small>* נקודת הביניים לשש שנים משוערת, וטרם אומתה מול נתוני העסקאות.</small>":""}</article>`}).join("");
+ const cards=[land,...rows.filter(r=>r.k!=="land")].map(r=>{const L=r.k==="land";return`<article class="card res ${L?"land":""}"><h3>${r.t||r.n}</h3><div class="bar"><b style="--w:${r.fin/land.fin*100}%"></b></div><div class="fin" data-to="${r.fin}">${ils(r.fin)}</div><dl><div><dt>רווח</dt><dd>${ils(r.fin-cap)}</dd></div><div><dt>${L?"פוטנציאל תשואה מצטברת":"תשואה מצטברת"}</dt><dd>${pc(r.m-1)}</dd></div>${L?"":`<div><dt>תשואה שנתית</dt><dd>${pc(CFG.rates[r.k])}</dd></div>`}</dl><small>${r.src}</small>${L&&y==6&&CFG.est6?"<small>* נקודת הביניים לשש שנים משוערת, וטרם אומתה מול נתוני העסקאות.</small>":""}</article>`}).join("");
  show(`${logo(0)}<h2 style="margin-top:18px">${ils(cap)} אחרי ${y} שנים</h2><div class="dots"></div><div class="note">${hit?"<b>ניחוש נכון.</b> קרקע פרטית הובילה.":`<b>טעיתם.</b> צפו בתוצאות וגלו את התשובה הנכונה.`}</div>${cards}<button class="btn" id="cta">רגע, יש עוד משהו שכדאי לדעת 👀</button><small style="margin-top:14px">${DISC}</small>`,"beige","results",0);
  if(!matchMedia("(prefers-reduced-motion:reduce)").matches)app.querySelectorAll("[data-to]").forEach(el=>{const to=+el.dataset.to,t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/1200);el.textContent=ils(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(t0)});
  $("#cta").onclick=opportunity}
