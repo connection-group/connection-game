@@ -1,0 +1,163 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>משחק ההשקעות — דשבורד</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap">
+<style>
+:root{--orange:#F0552A;--orange2:#F9B9A6;--black:#21110B;--beige:#F7EFEA;--white:#fff;--ink2:rgba(33,17,11,.68);--ink3:rgba(33,17,11,.45);--line:rgba(33,17,11,.10);--r:18px;--good:#1E8E5A;--warn:#C9811B}
+*{box-sizing:border-box;margin:0}
+body{font-family:Heebo,Arial,sans-serif;background:var(--beige);color:var(--black);line-height:1.45;padding:0 16px 48px}
+.wrap{max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 0 14px;flex-wrap:wrap}
+header h1{font-size:clamp(22px,4vw,30px);font-weight:900;line-height:1.1}
+header h1 span{color:var(--orange)}
+.sub{color:var(--ink2);font-size:14px;margin-top:4px}
+.live{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+.live i{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(30,142,90,.18);display:inline-block}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 18px}
+.chip{border:1.5px solid var(--line);background:var(--white);border-radius:999px;padding:7px 14px;font:500 14px Heebo;cursor:pointer;color:var(--ink2)}
+.chip.on{background:var(--black);border-color:var(--black);color:#fff}
+select,input[type=date],input[type=time]{border:1.5px solid var(--line);background:var(--white);border-radius:999px;padding:7px 12px;font:500 14px Heebo;color:var(--black)}
+.lbl{font-size:13px;color:var(--ink3);margin-inline-start:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--white);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+.kpi .n{font-size:clamp(30px,5vw,42px);font-weight:900;line-height:1;letter-spacing:-.01em}
+.kpi .t{font-size:13px;color:var(--ink2);margin-top:6px;font-weight:500}
+.kpi .d{font-size:12px;color:var(--ink3);margin-top:2px}
+.kpi.hero{background:var(--black);color:#fff}.kpi.hero .n{color:var(--orange)}.kpi.hero .t,.kpi.hero .d{color:rgba(255,255,255,.75)}
+.card{background:var(--white);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.card h2{font-size:17px;font-weight:900;margin-bottom:4px}
+.card .h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.card .hint{font-size:13px;color:var(--ink3)}
+/* funnel */
+.frow{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.frow:first-of-type{border-top:0}
+.frow img{width:54px;height:auto;border-radius:8px;border:1px solid var(--line);display:block;background:#eee;cursor:zoom-in}
+.fm{min-width:0}
+.ft{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ft b{font-weight:700;font-size:15px}
+.ft .num{font-weight:900;font-size:18px;white-space:nowrap}
+.ft .num small{font-weight:500;font-size:12px;color:var(--ink3);margin-inline-start:4px}
+.bar{height:12px;background:rgba(33,17,11,.07);border-radius:7px;margin-top:7px;overflow:hidden;position:relative}
+.bar b{display:block;height:100%;width:0;background:var(--orange);border-radius:7px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.drop{font-size:12px;margin-top:5px;color:var(--ink2);display:flex;gap:10px;flex-wrap:wrap}
+.drop .bad{color:#B4341F;font-weight:700}
+.frow.best .bar b{background:var(--black)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+/* hbar list */
+.hb{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;font-size:14px}
+.hb .b{height:10px;background:rgba(33,17,11,.07);border-radius:6px;overflow:hidden}.hb .b i{display:block;height:100%;background:var(--orange);border-radius:6px}
+.hb .v{font-weight:700;font-variant-numeric:tabular-nums}
+/* hours */
+.hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-items:end;height:110px;margin-top:6px}
+.hours div{background:var(--orange2);border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.hours div.hot{background:var(--orange)}.hours div.sel{outline:2px solid var(--black);outline-offset:1px}
+.hours div span{position:absolute;top:-18px;inset-inline:0;text-align:center;font-size:11px;font-weight:700;color:var(--ink2)}
+.hx{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;font-size:10px;color:var(--ink3);margin-top:4px;text-align:center}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:right;font-weight:700;color:var(--ink2);padding:8px 6px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;background:rgba(33,17,11,.07)}
+.tag.ok{background:rgba(30,142,90,.14);color:var(--good)}.tag.mid{background:rgba(240,85,42,.14);color:#B4341F}
+.empty{padding:30px;text-align:center;color:var(--ink3)}
+.foot{font-size:12px;color:var(--ink3);text-align:center;margin-top:18px}
+#lb{position:fixed;inset:0;background:rgba(33,17,11,.75);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
+#lb img{max-height:92vh;max-width:92vw;border-radius:14px}
+#lb.on{display:flex}
+.err{background:#fff3f0;border:1px solid #f3c4b8;border-radius:12px;padding:12px 14px;font-size:14px;color:#8a2a16;margin-bottom:14px;display:none}
+</style></head><body><div class="wrap">
+<header>
+ <div><h1>משחק ההשקעות <span>·</span> דשבורד</h1><div class="sub" id="sub">טוען נתונים…</div></div>
+ <div class="live"><i></i><span id="upd">מתעדכן כל דקה</span></div>
+</header>
+<div class="err" id="err"></div>
+<div class="filters">
+ <span class="lbl">תקופה</span>
+ <button class="chip on" data-p="all">הכול</button>
+ <button class="chip" data-p="today">היום</button>
+ <button class="chip" data-p="7">7 ימים</button>
+ <input type="date" id="day" title="יום מסוים"> <span class="lbl">משעה</span><input type="time" id="t1" step="900"> <span class="lbl">עד</span><input type="time" id="t2" step="900"> <button class="chip" id="clr" title="נקה סינון זמן">✕</button>
+ <span class="lbl">מקור</span><select id="src"><option value="">כל הברקודים</option></select>
+ <span class="lbl">מכשיר</span><select id="dev"><option value="">הכול</option><option value="mobile">טלפון</option><option value="desktop">מחשב</option></select>
+ <button class="chip" id="tests">כולל בדיקות</button>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="card">
+ <div class="h"><h2>המשפך — איפה אנשים עוצרים</h2><span class="hint">לחיצה על תמונה מגדילה · הפס = אחוז מהנכנסים</span></div>
+ <div id="funnel"></div>
+</div>
+
+<div class="two">
+ <div class="card"><div class="h"><h2>לפי שעה</h2><span class="hint" id="hh">כניסות לפי שעה ביום</span></div><div class="hours" id="hours"></div><div class="hx" id="hx"></div></div>
+ <div class="card"><div class="h"><h2>לפי ברקוד ומכשיר</h2></div><div class="hb" id="bysrc"></div><div style="height:14px"></div><div class="hb" id="bydev"></div></div>
+</div>
+
+<div class="card">
+ <div class="h"><h2>סשנים אחרונים</h2><span class="hint">כל סריקה — עד איפה הגיעה</span></div>
+ <div style="overflow:auto"><table><thead><tr><th>זמן</th><th>ברקוד</th><th>מכשיר</th><th>סכום</th><th>אופק</th><th>הגיע עד</th><th>סטטוס</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+<div class="foot">הנתונים נקראים ישירות מהגיליון "משחק ההשקעות - אנליטיקס" · בדיקות = סריקות שהמקור שלהן מתחיל ב-test</div>
+</div>
+<div id="lb" onclick="this.classList.remove('on')"><img id="lbi" alt=""></div>
+<script>
+const CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTIxWIh9oErgTpQvxEC37EyzApn3nRXYqI3EzIVma2i8xG36b77uGy8kG_Se9RklGofGfn1pBVOhtCV/pub?gid=0&single=true&output=csv";
+const SHOTS="https://connection-group.github.io/connection-game/shots/";
+const STEPS=[["open","כניסה (סריקה)","01_open"],["capital","הון עצמי","02_capital"],["goal","מטרת ההשקעה","03_goal"],["horizon","אופק זמן","04_horizon"],["guess","ניחוש","05_guess"],["results","תוצאות","06_results"],["opportunity","קופתקרקע","07_opportunity"],["form1","טופס — פרטים","08_form1"],["form2","טופס — מטרה","09_form2"],["form3","טופס — זמינות","10_form3"],["submitted","נשלח ✔","11_submitted"]];
+const ORDER=Object.fromEntries(STEPS.map((s,i)=>[s[0],i]));
+const F={p:"all",day:"",t1:"",t2:"",src:"",dev:"",tests:false};
+let ROWS=[];
+const $=s=>document.querySelector(s);
+const ils=n=>n?Number(n).toLocaleString("he-IL")+" ₪":"—";
+const pct=(a,b)=>b?Math.round(a/b*100)+"%":"0%";
+function parse(t){const L=t.replace(/\r/g,"").split("\n").filter(Boolean);const h=L.shift().split(",");return L.map(l=>{const c=[];let cur="",q=false;for(const ch of l){if(ch=='"'){q=!q;continue}if(ch==","&&!q){c.push(cur);cur=""}else cur+=ch}c.push(cur);const o={};h.forEach((k,i)=>o[k]=c[i]||"");return o})}
+async function load(){try{const r=await fetch(CSV+"&_="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;ROWS=parse(await r.text());$("#err").style.display="none";fillSrc();render();$("#upd").textContent="עודכן "+new Date().toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"})+" · מתעדכן כל דקה"}catch(e){$("#err").style.display="block";$("#err").textContent="לא הצלחתי לקרוא את הגיליון כרגע. בודק שוב בעוד דקה."}}
+function fillSrc(){const s=$("#src"),cur=s.value;const set=[...new Set(ROWS.map(r=>r.src).filter(Boolean))].sort();s.innerHTML='<option value="">כל הברקודים</option>'+set.map(v=>`<option ${v===cur?"selected":""}>${v}</option>`).join("")}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function filtered(){const t=today();const d7=new Date(Date.now()-6*864e5);const lim=d7.getFullYear()+"-"+String(d7.getMonth()+1).padStart(2,"0")+"-"+String(d7.getDate()).padStart(2,"0");
+ return ROWS.filter(r=>{if(!F.tests&&/^test/i.test(r.src))return false;if(F.src&&r.src!==F.src)return false;if(F.dev&&r.dev!==F.dev)return false;
+  if(F.t1&&r.time<F.t1)return false;if(F.t2&&r.time>F.t2)return false;
+  if(F.day)return r.date===F.day;if(F.p==="today")return r.date===t;if(F.p==="7")return r.date>=lim;return true})}
+function sessions(rows){const m=new Map();for(const r of rows){if(!m.has(r.sid))m.set(r.sid,{sid:r.sid,steps:new Set(),first:r.timestamp,last:r.timestamp,src:r.src,dev:r.dev,cap:"",y:"",maxi:-1});const s=m.get(r.sid);s.steps.add(r.step);if(r.timestamp<s.first)s.first=r.timestamp;if(r.timestamp>s.last)s.last=r.timestamp;if(r.cap)s.cap=r.cap;if(r.y)s.y=r.y;const i=ORDER[r.step]??-1;if(i>s.maxi)s.maxi=i}return [...m.values()]}
+function render(){const rows=filtered(),S=sessions(rows);
+ const cnt=STEPS.map(s=>S.filter(x=>x.steps.has(s[0])).length);const total=cnt[0],leads=cnt[10];
+ const reached=S.filter(x=>x.maxi>=5).length;
+ let worst={i:-1,v:0};for(let i=0;i<cnt.length-1;i++){const d=cnt[i]-cnt[i+1];if(d>worst.v)worst={i,v:d}}
+ $("#sub").textContent=`${S.length.toLocaleString("he-IL")} סשנים · ${rows.length.toLocaleString("he-IL")} אירועים`+(F.day?` · ${F.day}`:F.p==="today"?" · היום":F.p==="7"?" · 7 ימים אחרונים":"")+(F.t1||F.t2?` · שעות ${F.t1||"00:00"}–${F.t2||"23:59"}`:"");
+ $("#kpis").innerHTML=[
+  ["hero",total,"סרקו ונכנסו","כניסות ייחודיות למשחק"],
+  ["",reached,"ראו את התוצאות",pct(reached,total)+" מהנכנסים"],
+  ["",cnt[7],"פתחו טופס",pct(cnt[7],total)+" מהנכנסים"],
+  ["",leads,"השאירו פרטים",pct(leads,total)+" המרה מכניסה לליד"],
+  ["",worst.i>=0&&worst.v?worst.v:"—","הנטישה הגדולה",worst.i>=0&&worst.v?"אחרי "+STEPS[worst.i][1]:"אין עדיין נתונים"]
+ ].map(k=>`<div class="kpi ${k[0]}"><div class="n">${typeof k[1]==="number"?k[1].toLocaleString("he-IL"):k[1]}</div><div class="t">${k[2]}</div><div class="d">${k[3]}</div></div>`).join("");
+ $("#funnel").innerHTML=STEPS.map((s,i)=>{const n=cnt[i],drop=i<cnt.length-1?n-cnt[i+1]:0,best=i===worst.i&&worst.v>0;
+  return `<div class="frow ${best?"best":""}"><img src="${SHOTS}${s[2]}.png" alt="${s[1]}" onclick="lb(this.src)" loading="lazy"><div class="fm"><div class="ft"><b>${i+1}. ${s[1]}</b><span class="num">${n.toLocaleString("he-IL")}<small>${pct(n,total)}</small></span></div><div class="bar"><b data-w="${total?n/total*100:0}"></b></div><div class="drop">${i<cnt.length-1?(drop>0?`<span class="${best?"bad":""}">נטשו כאן: ${drop} (${pct(drop,n)})</span>`:`<span>אף אחד לא נטש כאן</span>`):`<span>${n?"🎉 ":""}לידים שנוצרו בזוהו</span>`}</div></div></div>`}).join("")||`<div class="empty">אין נתונים לסינון הזה</div>`;
+ requestAnimationFrame(()=>document.querySelectorAll(".bar b").forEach(b=>b.style.width=b.dataset.w+"%"));
+ // hours
+ const save=[F.t1,F.t2];F.t1="";F.t2="";const S0=sessions(filtered());[F.t1,F.t2]=save;const H=new Array(24).fill(0);S0.forEach(x=>{const h=+x.first.slice(11,13);if(h>=0&&h<24)H[h]++});const mx=Math.max(1,...H);
+ $("#hours").innerHTML=H.map((v,h)=>`<div class="${v===mx&&v?"hot":""} ${F.t1&&+F.t1.slice(0,2)<=h&&h<=+(F.t2||"23").slice(0,2)?"sel":""}" style="height:${Math.max(2,v/mx*100)}%;cursor:pointer" title="${h}:00–${h}:59 — ${v} · לחיצה מסננת לשעה הזו" onclick="setHour(${h})">${v?`<span>${v}</span>`:""}</div>`).join("");
+ $("#hx").innerHTML=H.map((_,h)=>h%3===0?`<div>${h}</div>`:"<div></div>").join("");
+ $("#hh").textContent="כניסות לפי שעה"+(F.day||F.p==="today"?" (היום הנבחר)":" (כל התקופה)");
+ const group=(k,lab)=>{const m={};S.forEach(x=>{const v=x[k]||"—";m[v]=m[v]||{n:0,l:0};m[v].n++;if(x.steps.has("submitted"))m[v].l++});const e=Object.entries(m).sort((a,b)=>b[1].n-a[1].n);const mm=Math.max(1,...e.map(x=>x[1].n));
+  return e.map(([v,o])=>`<span>${lab(v)}</span><div class="b"><i style="width:${o.n/mm*100}%"></i></div><span class="v">${o.n} <small style="color:var(--ink3);font-weight:500">· ${o.l} לידים</small></span>`).join("")||`<span class="empty">—</span>`};
+ $("#bysrc").innerHTML=group("src",v=>"ברקוד: "+v);
+ $("#bydev").innerHTML=group("dev",v=>v==="mobile"?"📱 טלפון":v==="desktop"?"💻 מחשב":v);
+ // table
+ const T=S.sort((a,b)=>b.first.localeCompare(a.first)).slice(0,60);
+ $("#rows").innerHTML=T.map(x=>{const st=x.maxi>=0?STEPS[x.maxi][1]:"—";const done=x.steps.has("submitted");const cls=done?"ok":x.maxi>=7?"mid":"";
+  return `<tr><td>${x.first.slice(5,16).replace("T"," ")}</td><td>${x.src||"—"}</td><td>${x.dev==="mobile"?"טלפון":x.dev==="desktop"?"מחשב":"—"}</td><td>${ils(x.cap)}</td><td>${x.y?x.y+" שנים":"—"}</td><td>${st}</td><td><span class="tag ${cls}">${done?"ליד ✔":x.maxi>=7?"נטש בטופס":x.maxi>=5?"ראה תוצאות":"נטש מוקדם"}</span></td></tr>`}).join("")||`<tr><td colspan="7" class="empty">אין סשנים</td></tr>`;
+}
+function setHour(h){const p=n=>String(n).padStart(2,"0");F.t1=p(h)+":00";F.t2=p(h)+":59";$("#t1").value=F.t1;$("#t2").value=F.t2;render()}
+function lb(src){$("#lbi").src=src;$("#lb").classList.add("on")}
+document.querySelectorAll(".chip[data-p]").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip[data-p]").forEach(x=>x.classList.remove("on"));c.classList.add("on");F.p=c.dataset.p;F.day="";$("#day").value="";render()});
+$("#day").onchange=e=>{F.day=e.target.value;document.querySelectorAll(".chip[data-p]").forEach(x=>x.classList.remove("on"));render()};
+$("#t1").onchange=e=>{F.t1=e.target.value;render()};$("#t2").onchange=e=>{F.t2=e.target.value;render()};
+$("#clr").onclick=()=>{F.day="";F.t1="";F.t2="";$("#day").value="";$("#t1").value="";$("#t2").value="";F.p="all";document.querySelectorAll(".chip[data-p]").forEach(x=>x.classList.toggle("on",x.dataset.p==="all"));render()};
+$("#src").onchange=e=>{F.src=e.target.value;render()};
+$("#dev").onchange=e=>{F.dev=e.target.value;render()};
+$("#tests").onclick=e=>{F.tests=!F.tests;e.target.classList.toggle("on",F.tests);render()};
+load();setInterval(load,60000);
+</script></body></html>
